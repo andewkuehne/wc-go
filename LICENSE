@@ -1,0 +1,8 @@
+/*
+ * wc-go - a Go implementation of the 'wc' command-line utility.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the Apache License 2.0.
+ *
+ * Copyright (c) 2023 Andrew Kuehne
+ */
