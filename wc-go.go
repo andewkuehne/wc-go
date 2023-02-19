@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
@@ -12,25 +13,24 @@ type counts struct {
 	byteCount, wordCount, lineCount int
 }
 
-func countInput(input []byte, countBytes, countWords, countLines bool) counts {
+func countInput(input io.Reader, countBytes, countWords, countLines bool) counts {
 	var (
 		bytesCount, wordsCount, linesCount int
-		inWord                             bool
 	)
-	for _, b := range input {
-		bytesCount++
-		switch b {
-		case '\n':
-			linesCount++
-			inWord = false
-		case ' ', '\t', '\r', '\f', '\v':
-			inWord = false
-		default:
+	scanner := bufio.NewScanner(input)
+	scanner.Split(bufio.ScanWords)
+	inWord := false
+	for scanner.Scan() {
+		bytesCount += len(scanner.Bytes())
+		if countWords {
 			if !inWord {
 				inWord = true
 				wordsCount++
 			}
 		}
+	}
+	if countLines {
+		linesCount = 1
 	}
 	return counts{
 		byteCount: bytesCount,
@@ -55,13 +55,9 @@ func countArgs(args []string) (counts, error) {
 		return counts{}, err
 	}
 	defer file.Close()
-	data, err := io.ReadAll(file)
-	if err != nil {
-		return counts{}, err
-	}
 
 	// Count data
-	counts := countInput(data, *countBytesPtr, *countWordsPtr, *countLinesPtr)
+	counts := countInput(file, *countBytesPtr, *countWordsPtr, *countLinesPtr)
 
 	return counts, nil
 }
@@ -69,13 +65,8 @@ func countArgs(args []string) (counts, error) {
 func wc(args []string) {
 	if len(args) == 0 {
 		// No arguments, read from standard input
-		data, err := io.ReadAll(os.Stdin)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error reading standard input: %v\n", err)
-			os.Exit(1)
-		}
-		counts := countInput(data, true, true, true)
-		fmt.Printf("%d %d %d\n", counts.lineCount, counts.wordCount, counts.byteCount)
+		counts := countInput(os.Stdin, true, true, true)
+		fmt.Fprint(os.Stdout, counts.lineCount, " ", counts.wordCount, " ", counts.byteCount, "\n")
 	} else {
 		// Parse arguments and count data from file
 		counts, err := countArgs(args)
@@ -95,7 +86,7 @@ func wc(args []string) {
 		if counts.byteCount > 0 {
 			countStrings = append(countStrings, fmt.Sprintf("%d", counts.byteCount))
 		}
-		fmt.Printf("%s %s\n", strings.Join(countStrings, " "), flag.Arg(0))
+		fmt.Fprint(os.Stdout, strings.Join(countStrings, " "), " ", flag.Arg(0), "\n")
 	}
 }
 

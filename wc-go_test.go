@@ -8,7 +8,7 @@ import (
 
 func TestCountBytes(t *testing.T) {
 	input := bytes.NewBufferString("This is a test.")
-	inCounts := countInput(input.Bytes(), true, false, false)
+	inCounts := countInput(bytes.NewReader(input.Bytes()), true, false, false)
 	expected := counts{byteCount: 15}
 	if inCounts != expected {
 		t.Errorf("Expected %v, but got %v", expected, inCounts)
@@ -17,7 +17,7 @@ func TestCountBytes(t *testing.T) {
 
 func TestCountWords(t *testing.T) {
 	input := bytes.NewBufferString("This is a test.")
-	inCounts := countInput(input.Bytes(), false, true, false)
+	inCounts := countInput(bytes.NewReader(input.Bytes()), false, true, false)
 	expected := counts{wordCount: 4}
 	if inCounts != expected {
 		t.Errorf("Expected %v, but got %v", expected, inCounts)
@@ -26,7 +26,7 @@ func TestCountWords(t *testing.T) {
 
 func TestCountLines(t *testing.T) {
 	input := bytes.NewBufferString("This\nis\na\ntest.")
-	inCounts := countInput(input.Bytes(), false, false, true)
+	inCounts := countInput(bytes.NewReader(input.Bytes()), false, false, true)
 	expected := counts{lineCount: 4}
 	if inCounts != expected {
 		t.Errorf("Expected %v, but got %v", expected, inCounts)
@@ -35,7 +35,7 @@ func TestCountLines(t *testing.T) {
 
 func TestCountAll(t *testing.T) {
 	input := bytes.NewBufferString("This is a test.\nThis is only a test.")
-	inCounts := countInput(input.Bytes(), true, true, true)
+	inCounts := countInput(bytes.NewReader(input.Bytes()), true, true, true)
 	expected := counts{byteCount: 34, wordCount: 9, lineCount: 2}
 	if inCounts != expected {
 		t.Errorf("Expected %v, but got %v", expected, inCounts)
@@ -73,7 +73,7 @@ func TestCountFile(t *testing.T) {
 
 func TestCountNoArgs(t *testing.T) {
 	input := bytes.NewBufferString("This is a test.\nThis is only a test.")
-	inCounts := countInput(input.Bytes(), false, false, false)
+	inCounts := countInput(bytes.NewReader(input.Bytes()), false, false, false)
 	expected := counts{byteCount: 34, wordCount: 9, lineCount: 2}
 	if inCounts != expected {
 		t.Errorf("Expected %v, but got %v", expected, inCounts)
