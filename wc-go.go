@@ -95,7 +95,7 @@ func wc(args []string) {
 		if counts.byteCount > 0 {
 			countStrings = append(countStrings, fmt.Sprintf("%d", counts.byteCount))
 		}
-		fmt.Println(strings.Join(countStrings, " "))
+		fmt.Printf("%s %s\n", strings.Join(countStrings, " "), flag.Arg(0))
 	}
 }
 
