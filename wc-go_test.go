@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -36,7 +37,7 @@ func TestCountLines(t *testing.T) {
 func TestCountAll(t *testing.T) {
 	input := bytes.NewBufferString("This is a test.\nThis is only a test.")
 	inCounts := countInput(bytes.NewReader(input.Bytes()), true, true, true)
-	expected := counts{byteCount: 34, wordCount: 9, lineCount: 2}
+	expected := counts{byteCount: 35, wordCount: 9, lineCount: 2}
 	if inCounts != expected {
 		t.Errorf("Expected %v, but got %v", expected, inCounts)
 	}
@@ -65,8 +66,8 @@ func TestCountFile(t *testing.T) {
 	}
 
 	// Check counts
-	expected := counts{byteCount: 34, wordCount: 9, lineCount: 2}
-	if inCounts != expected {
+	expected := &counts{byteCount: 35, wordCount: 9, lineCount: 2}
+	if !reflect.DeepEqual(inCounts, expected) {
 		t.Errorf("Expected %v, but got %v", expected, inCounts)
 	}
 }

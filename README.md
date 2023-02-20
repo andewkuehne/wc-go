@@ -1,4 +1,5 @@
 # wc-go
+## This is not working properly at this time, It returns the wrong counts and the unit test obviously fail.
 wc-go is a Go implementation of the wc command-line utility, which counts the number of lines, words, and bytes in a file or input stream.
 
 ## Installation
